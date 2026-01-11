@@ -1,20 +1,15 @@
 # --- Project Metadata ---
-# To switch to a different dataset, just change the ID here (e.g., ["SRR19011702"])
 SAMPLES: ["SRR1805151"]
 
 # --- Subsampling Parameters ---
-# These are the percentages of the original data we will test.
-# For small datasets (25MB), we avoid very low percentages like 0.01.
 FRACTIONS: ["0.10", "0.25", "0.50", "0.75", "0.90", "1.00"]
 
 # --- Path Configuration ---
-# Ensure these folders exist in your project directory
 RAW_DATA_DIR: "data/raw/"
 KRAKEN_DB: "database/kraken2_std8"
 
 # --- Tool Parameters ---
-# Kraken2 taxonomic level: S = Species, G = Genus, F = Family
 TAX_LEVEL: "S"
 
-# Seed for random subsampling (ensures reproducibility)
 SEED: 111
+
