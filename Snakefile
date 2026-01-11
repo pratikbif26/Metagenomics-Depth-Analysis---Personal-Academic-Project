@@ -7,7 +7,6 @@ SAMPLES = config["SAMPLES"]
 FRACTIONS = config["FRACTIONS"]
 
 # 2. Final Target Rule
-# This rule tells Snakemake exactly which files we want at the very end.
 rule all:
     input:
         # Final Bracken reports for every fraction
@@ -19,7 +18,6 @@ rule all:
 
 
 # 3. Rule: Subsample Reads
-# Uses seqtk to create smaller versions of your data.
 rule subsample:
     input:
         r1 = os.path.join(config["RAW_DATA_DIR"], "{sample}_R1.fastq.gz"),
@@ -42,7 +40,6 @@ rule subsample:
         """
 
 # 4. Rule: Quality Control
-# Cleans the reads using fastp.
 rule fastp_qc:
     input:
         r1 = "results/subsampled/{sample}_{fraction}_R1.fq.gz",
@@ -56,7 +53,6 @@ rule fastp_qc:
         "fastp -i {input.r1} -I {input.r2} -o {output.r1} -O {output.r2} -h {output.html} -w {threads}"
 
 # 5. Rule: Taxonomic Classification
-# Identifies which species the reads belong to.
 rule kraken2:
     input:
         r1 = "results/qc/{sample}_{fraction}_R1.clean.fq.gz",
@@ -73,7 +69,6 @@ rule kraken2:
         """
 
 # 6. Rule: Abundance Estimation
-# Refines Kraken2 results to give actual species counts.
 rule bracken:
     input:
         report = "results/kraken2/{sample}_{fraction}.kreport"
@@ -86,7 +81,6 @@ rule bracken:
         "bracken -d {params.db} -i {input.report} -o {output.species} -l {params.level}"
 
 # 7. Rule: Aggregate Results
-# Merges all individual reports into one table.
 rule aggregate_results:
     input:
         expand("results/bracken/{sample}_{fraction}.species.bracken", 
@@ -97,7 +91,6 @@ rule aggregate_results:
         "python scripts/aggregate.py -o {output} {input}"
 
 # 8. Rule: Visualization
-# Generates the final Rarefaction and Correlation plots.
 rule plot_results:
     input:
         "results/analysis/master_abundance_table.tsv"
@@ -105,4 +98,5 @@ rule plot_results:
         "results/plots/alpha_diversity.png",
         "results/plots/abundance_correlation.png"
     shell:
+
         "python scripts/plot.py -i {input} -o results/plots/"
